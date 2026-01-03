@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+eggs/
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Config files with secrets
+apikey.txt
+kraken_config.json
+
+# Logs
+*.log
+log.txt
+
+# Backup folder (development only)
+backup/
+
+# Cache
+.cache/
+data/
+config/
+
+# Temporary files
+*.tmp
+*.bak
+
+# Discord files (separate repo)
+kraken_discord*.py
+kraken_discord*.json
+kraken discord.json
