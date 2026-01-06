@@ -181,6 +181,14 @@ class KrakenImageProcessor:
     FUNCTION = "process_image"
     CATEGORY = "Kraken/Image"
 
+    @classmethod
+    def VALIDATE_INPUTS(cls, source_mode, image_upload, **kwargs):
+        """Validate inputs, especially uploaded file paths for security"""
+        if source_mode == "upload" and image_upload and image_upload != "(none)":
+            if not folder_paths.exists_annotated_filepath(image_upload):
+                return f"Invalid image file: {image_upload}"
+        return True
+
     # --- NEW: Placeholder factory so the node always has something to process ---
     def create_placeholder_image(self, preserve_alpha=True, w=512, h=512):
         mode = 'RGBA' if preserve_alpha else 'RGB'
@@ -389,15 +397,15 @@ class KrakenImageProcessor:
         else:  # source_mode == "upload"
             use_placeholder = (image_upload is None) or (image_upload == "(none)")
             if not use_placeholder:
-                input_dir = folder_paths.get_input_directory()
-                image_path = os.path.join(input_dir, image_upload)
+                # Use ComfyUI's built-in path sanitization to prevent path traversal attacks
+                image_path = folder_paths.get_annotated_filepath(image_upload)
                 try:
                     pil_image = Image.open(image_path)
                     pil_image = ImageOps.exif_transpose(pil_image)
-                    source_info = f"Source: {image_upload}"
+                    source_info = f"Source: {os.path.basename(image_upload)}"
                 except Exception:
                     pil_image = self.create_placeholder_image(preserve_alpha=preserve_alpha)
-                    source_info = f"Source: Placeholder (failed to open '{image_upload}')"
+                    source_info = f"Source: Placeholder (failed to open '{os.path.basename(image_upload)}')"
             else:
                 pil_image = self.create_placeholder_image(preserve_alpha=preserve_alpha)
                 source_info = "Source: Placeholder (no uploaded image)"
